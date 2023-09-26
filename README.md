@@ -10,18 +10,26 @@ Deploying a simple web application on tomcat using apache maven, and pushing the
 ### Maven Server Setup and Configuration
 
 1. Launch an Amazon Linux EC2 instance server on AWS
+
 ![amazonlinux pic or ec2 maven pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/amazonlinux.png)
+
 2. Install Java JDK 17
+
 ```yum install java-17 -y```
+
 ```java -version``` to confirm installation
+
 3. After installation, we need to add the java path to the bash profile
+   
 ```vi ~/.bash_profile```
+
 4. Use ```find /usr/lib/jvm/java-17* | head -n3``` to find the path.
+
 ![jdk17 to path pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/jdk17%20to%20path.png)
 
 - To activate: ```source ~/.bash_profile```
 
-```echo $PATH``` to confirm.
+- ```echo $PATH``` to confirm.
 
 5. Next, we download maven into the /opt/ directory (the directory is just a choice)
 
@@ -38,23 +46,31 @@ wget https://dlcdn.apache.org/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bi
 
 7. Now maven is successfully installed
   
-```mvn -version``` to confirm installation.
+Use ```mvn -version``` to confirm installation.
 
 ### Obtaining the webapp for deployment
 
-- Install git and clone a simple webapp repository (https://github.com/seunayolu/maven-build-website.git) into any suitable directory on the maven server.
-- This directory is cloned from [seunaolu](), and the webapp is a template from [tooplate](https://www.tooplate.com/view/2136-kool-form-pack)
+1. Install git and clone a simple webapp repository (https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush.git) into any suitable directory on the maven server.
+
+- This directory is cloned from [seunaolu](https://github.com/seunayolu/maven-build-website), and the webapp is a template from [tooplate](https://www.tooplate.com/view/2136-kool-form-pack)
+  
 - Install tree ```yum install tree -y```
-- cd into the webapp directory and view the directory structure using ```tree```
-![dir structure pic](pic link)
+  
+2. cd into the webapp directory and view the directory structure using ```tree```
+  
+![dir structure pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/dir%20structure.png)
+
 - ```vi pom.xml``` to view the contents of the pom.xml (this contains instructions for the application)
 
 ### Building the webapp
 
-- We can run any of the maven goals ```validate, compile, test, package, install, deploy```
+1. We can run any of the maven goals ```validate, compile, test, package, install, deploy```
+  
 - Run ```mvn clean``` first to remove any previously created 'target' directory.
-```mvn package``` (this creates a target folder with snapshot and a jar executable .war file)
-- after running maven gaols, a **.M2 directory** is created in the ~ directory. This directory is where we add a settings.xml file 2ru which we'll provision access to maven artefacts.
+  
+2. ```mvn package``` (this creates a target folder with snapshot and a jar executable .war file)
+  
+- after running maven gaols, a **.m2 directory** is created in the ~ directory. This directory is where we add a settings.xml file 2ru which we'll provision access to maven artefacts.
 
 ### Tomcat Server Setup and Configuration
 
