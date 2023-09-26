@@ -15,13 +15,13 @@ Deploying a simple web application on tomcat using apache maven, and pushing the
 
 2. Install Java JDK 17
 
-```yum install java-17 -y```
+   ```yum install java-17 -y```
 
-```java -version``` to confirm installation
+   ```java -version``` to confirm installation
 
 3. After installation, we need to add the java path to the bash profile
    
-```vi ~/.bash_profile```
+   ```vi ~/.bash_profile```
 
 4. Use ```find /usr/lib/jvm/java-17* | head -n3``` to find the path.
 
@@ -29,7 +29,7 @@ Deploying a simple web application on tomcat using apache maven, and pushing the
 
 - To activate: ```source ~/.bash_profile```
 
-- ```echo $PATH``` to confirm.
+   ```echo $PATH``` to confirm.
 
 5. Next, we download maven into the /opt/ directory (the directory is just a choice)
 
@@ -40,7 +40,7 @@ wget https://dlcdn.apache.org/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bi
 ```
 - Extract using ```tar -xvzf apache-maven-3.9.4-bin.tar.gz```
 
-6. cd into the folder and use pwd to get the working directory which we will add to the bash_profile
+6. ```cd``` into the folder and use ```pwd``` to get the working directory which we will add to the .bash_profile
 
 ![path pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/path%20pic.png)
 
@@ -60,7 +60,7 @@ Use ```mvn -version``` to confirm installation.
   
 ![dir structure pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/dir%20structure.png)
 
-- ```vi pom.xml``` to view the contents of the pom.xml (this contains instructions for the application)
+   ```vi pom.xml``` to view the contents of the pom.xml (this contains instructions for the application)
 
 ### Building the webapp
 
@@ -70,52 +70,96 @@ Use ```mvn -version``` to confirm installation.
   
 2. ```mvn package``` (this creates a target folder with snapshot and a jar executable .war file)
   
-- after running maven gaols, a **.m2 directory** is created in the ~ directory. This directory is where we add a settings.xml file 2ru which we'll provision access to maven artefacts.
+- After running maven gaols, a **.m2 directory** is created in the ~ directory. This directory is where we add a settings.xml file 2ru which we'll provision access to maven artefacts.
 
 ### Tomcat Server Setup and Configuration
 
-- Now, let's deploy a Tomcat server on AWS
-![tomcat server or ec2 tomcat](pic link)
+1. Now, let's deploy a Tomcat server on AWS
+   
+![tomcat server or ec2 tomcat](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/ec2%20tomcat.png)
+
 - By default, tomcat runs on port 8080. We'll, however, open tomcat up on a different port, say 8090. (In my environment, I already have Jenkins running on port 8080).
-- Install java17 and provision environmental variables in .bash_profile (Just like before)
-- Now, install tomcat in the /opt/ directory (just to be consistent)
+  
+2. Install java17 and provision environmental variables in .bash_profile (Just like before)
+   
+3. Now, install tomcat in the /opt/ directory (just to be consistent)
+   
 - Download tomcat packages from https://tomcat.apache.org/download-90.cgi
-```wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz```
-- After extraction, cd into the directory.
-- Next, cd into the /bin directory and give execute right to our users in the startup and shutdown scripts.
-```chmod +x startup.sh```
-```chmod +x shutdown.sh```
-![chmod pic](pic link)
-- Let's create a link file to the startup and shutdown scripts
-```ln -s /opt/apache-tomcat-9.0.80/bin/startup.sh /usr/local/bin/tomcatup```
-```ln -s /opt/apache-tomcat-9.0.80/bin/shutdown.sh /usr/local/bin/tomcatdown```
-![start and stop pic](pic link)
+  
+```
+wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz
+```
+
+- After extraction, ```cd``` into the directory.
+  
+4. Next, ```cd``` into the /bin directory and give execute right to our users in the startup and shutdown scripts.
+  
+```
+chmod +x startup.sh
+```
+```
+chmod +x shutdown.sh
+```
+
+![chmod pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/chmod.png)
+
+5. Let's create a link file to the startup and shutdown scripts
+   
+```
+ln -s /opt/apache-tomcat-9.0.80/bin/startup.sh /usr/local/bin/tomcatup
+```
+```
+ln -s /opt/apache-tomcat-9.0.80/bin/shutdown.sh /usr/local/bin/tomcatdown
+```
+
+![start and stop pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/start%20and%20stop.png)
+
 - Now, from any directory, we can start and stop tomcat using ```tomcatup``` and ```tomcatdown``` respectively.
-- Now let's change the default Tomcat port.
-- We do that by editing the **/conf** directory ```server.xml``` in the tomcat directory installation.
-![conf pic](pic link)
+  
+6. Now let's change the default Tomcat port.
+   
+- We do that by editing the **/conf** directory "server.xml" in the tomcat directory installation.
+  
+![conf pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/conf.png)
+
 - Under the **connector** section, we edit 8080 to 8090.
-![connector pic](pic link)
-- We also need to open up port 8090 in our aws security group.
+  
+![connector pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/connector.png)
 
-- Again, by default, tomcat does not allow login from a browser, so we need to fix that.
+7. We also need to open up port 8090 in our aws security group.
+
+8. Again, by default, tomcat does not allow login from a browser, so we need to fix that.
+   
 - We need to edit all the **context.xml** files in **webapps/** directory inside the tomcat directory installation.
-```find / -name context.xml```
-![contextxml pic](pic link)
+  
+   ```find / -name context.xml```
+  
+![contextxml pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/contextxml.png)
+
 - We need to ```vi``` into these four files
-![vi-into pic](pic link)
+  
+![vi-into pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/vi-into.png)
+
 - Inside these four files, we need to **comment out** the **<Valve** section.
-![valve1 pic](pic link)
-![valve2 pic](pic link)
-![valve3 pic](pic link)
-![valve4 pic](pic link)
+  
+![valve1 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/valve1.png)
 
-- Now, we can start tomcat ```tomcatup```
+![valve2 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/valve2.png)
+
+![valve3 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/valve3.png)
+
+![valve4 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/valve4.png)
+
+9. Now, we can start tomcat using ```tomcatup```
+    
 - Then we can access the webserver on the browser using the ip and port specified
-![tomcat browser pic](pic link)
+  
+![tomcat browser pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/tomcat%20browser.png)
 
-- Inorder to access the "Manager App" as "Host Manager", we need to provide user details in **conf/tomcat-users.xml**
--  Now add the following rolename values to the file:
+10. Inorder to access the "Manager App" as "Host Manager", we need to provide user details in **conf/tomcat-users.xml**
+    
+-  Add the following rolename values to the file:
+  
 ```bash
  <role rolename="manager-gui"/>
  <role rolename="manager-script"/>
@@ -126,21 +170,32 @@ Use ```mvn -version``` to confirm installation.
  <user username="tomcat" password="s3cret" roles="manager-gui, admin-gui"/>
  ```
 
-- Now let's log into tomcat manager app using the "tomcat" username and password.
+11. Now let's log into tomcat manager app using the "tomcat" username and password.
+    
 - We now have access to all sections of tomcat and we can now begin deploying our web-applications from maven to tomcat.
-![manager pic](pic link)
-![host manager pic](pic link)
+  
+![manager pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/manager.png)
+
+![host manager pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/host%20manager.png)
 
 ### Deployment to Tomcat
 
-- On the maven server, we can use ```mvn clean``` to clean our webapp.
-- Let's open the pom.xml
+1. On the maven server, we can use ```mvn clean``` to clean our webapp.
+   
+2. Let's open the pom.xml
+   
     - Here, we specify packaging as 'war' instead of the default 'jar'
+      
     - We also use the **tomcat7-maven-plugin** inorder to deploy directly to tomcat
-- Inorder for maven to access tomcat, we need to create and configure a ```settings.xml``` file in **~.m2** as stated earlier
-![m2 pic](pic link)
+      
+3. Inorder for maven to access tomcat, we need to create and configure a ```settings.xml``` file in **~.m2** as stated earlier
+   
+![m2 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/m2.png)
+
 - Inside .m2 directory, do ```vi settings.xml```
+  
 - Then configure access with username and password
+  
 ```bash
 <?xml version="1.0" encoding='UTF-8"?>
 <settings>
@@ -153,18 +208,26 @@ Use ```mvn -version``` to confirm installation.
     </servers>
 </settings>
 ```
-![settingsxml pic](pic link)
 
-- Now, let's deploy
-```mvn tomcat7:deploy```
-![tomcat success pic](pic link)
+![settingsxml pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/settingsxml.png)
 
-- Our deployment will be in the 'webapps' directory of the Tomcat server installation similar to the tomcat web application manager on the web
-![deployment1 pic](pic link)
-![deployment2 pic](pic link)
+4. Now, let's deploy
+   
+```
+mvn tomcat7:deploy
+```
 
-- Now, our webapp is up and running on the browser
-![earthapp pic](pic link)
+![tomcat success pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/tomcat%20success.png)
+
+5. Our deployment will be in the 'webapps' directory of the Tomcat server installation similar to the tomcat web application manager on the web
+   
+![deployment1 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/deployment1.png)
+
+![deployment2 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/deployment2.png)
+
+6. Now, our webapp is up and running on the browser
+  
+![earthapp pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/earthapp.png)
 
 
 ### Setting Up Nexus Repository
