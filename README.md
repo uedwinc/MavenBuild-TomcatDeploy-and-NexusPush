@@ -209,7 +209,6 @@ ln -s /opt/apache-tomcat-9.0.80/bin/shutdown.sh /usr/local/bin/tomcatdown
 </settings>
 ```
 
-![settingsxml pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/settingsxml.png)
 
 4. Now, let's deploy
    
@@ -232,47 +231,89 @@ mvn tomcat7:deploy
 
 ### Setting Up Nexus Repository
 
-- Let's start up a Nexus server on aws (Nexus requires at least 4 vCPU to run but we'll nevertheless use t3-medium to conserve cost)
-![nexusaws pic](pic link)
-- Next, we'll open up port 8081 on the security group as nexus requires that.
-- Nexus works with java 1.8, so install ```yum install java-1.8* -y``` and configure the paths in **.bash_profile**
-- Now, let's download nexus ```wget https://download.sonatype.com/nexus/3/nexus-3.59.0-01-unix.tar.gz``` into /opt directory.
+1. Let's start up a Nexus server on aws (Nexus requires at least 4 vCPU to run but we'll nevertheless use t3-medium to conserve cost)
+   
+![nexusaws pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/nexusaws.png)
+
+2. Next, we'll open up port 8081 on the security group as nexus requires that.
+   
+3. Nexus works with java 1.8, so install using ```yum install java-1.8* -y``` and configure the paths in **.bash_profile**
+  
+4. Now, let's download nexus into /opt directory.
+```
+wget https://download.sonatype.com/nexus/3/nexus-3.59.0-01-unix.tar.gz
+```
+
 - After extraction, we get a **nexus...** directory and a **sonatype-work** directory
-![nexusdir pic](pic link)
-- cd into the **nexus...** directory and start nexus from the bin directory ```bin/nexus start```
+  
+![nexusdir pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/nexusdir.png)
+
+5. ```cd``` into the **nexus...** directory and start nexus from the bin directory
+
+```
+bin/nexus start
+```
+
 - Nexus warns against starting as root user so let's create a new user for nexus and change ownership of those repositories to it.
-![nexuswarn pic](pic link)
-- Create a new user ```useradd nexus```
-- Change the password ```passwd nexus```
-- Change ownership of the two nexus directories to the new user
-![chown pic](pic link)
-- Next we need to specify the user to run nexus with in the **nexus.rc** file inside the **bin/** directory
-![runasuser pic](pic link)
-- Now, let's change user ```su -nexus``` and start nexus ```bin/nexus start```
-![start nexus pic](pic link)
-- Start nexus in browser using ip address and port
-![signin pic](pic link)
+
+![nexuswarn pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/nexuswarn.png)
+
+6. Create a new user ```useradd nexus```
+
+7. Change the password ```passwd nexus```
+   
+8. Change ownership of the two nexus directories to the new user
+   
+![chown pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/chown.png)
+
+9. Next we need to specify the user to run nexus with in the **nexus.rc** file inside the **bin/** directory
+  
+![runasuser pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/runasuser.png)
+
+10. Now, let's change user ```su -nexus``` and start nexus ```bin/nexus start```
+  
+![start nexus pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/startnexus.png)
+
+11. Launch nexus in browser using ip address and port
+  
+![signin pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/signin.png)
+
 - We need to get the password as specified by nexus and sign in with **admin** username
-- Let's create a new blob in addition to the default. We'll call it **"maven-repo"**.
-![blob pic](pic link)
+  
+12. Let's create a new blob in addition to the default. We'll call it **"maven-repo"**.
+    
+![blob pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/blob.png)
+
 - We can also see it reflect on the command line
-![blobcmd pic](pic link)
-- Next, lets create a new snapshot repository on the nexus browser console. We'll call it **"maven-app"**.
-![snapshot pic](pic link)
+  
+![blobcmd pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/blobcmd.png)
+
+13. Next, lets create a new snapshot repository on the nexus browser console. We'll call it **"maven-app"**.
+    
+![snapshot pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/snapshot.png)
 
 
 ### Pushing Artifact to Nexus Repository
 
-- On the maven server, we need to edit the "pom.xml" with instructions for nexus push by adding a "distribution management" section
-![distmgnt pic](pic link)
-- We also need to edit the "settings.xml" file in .m2 directory
-- But first, on the nexus repository web console, we need to create a **user** with priviledges to push into the repository. This priviledges are defined under created **roles.**
+1. On the maven server, we need to edit the "pom.xml" with instructions for nexus push by adding a "distribution management" section
+   
+![distmgnt pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/distmgnt.png)
+
+2. We also need to edit the "settings.xml" file in .m2 directory
+   
+3. But first, on the nexus repository web console, we need to create a **user** with priviledges to push into the repository. This priviledges are defined under created **roles.**
+   
 - So, we created a role called "maven-app" and attached "view*" priviledges to it.
-![role1 pic](pic link)
-![role2 pic](pic link)
-- Then we created a user called "devops-user" and attached the maven-app role to it.
-![devopsuser pic](pic link)
-- Now, let's include these details in the settings.xml
+  
+![role1 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/role1.png)
+
+![role2 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/role2.png)
+
+- Then we create a user called "devops-user" and attached the maven-app role to it.
+  
+![devopsuser pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/devopsuser.png)
+
+4. Now, let's include these details in the settings.xml
 
 ```bash
 <?xml version="1.0" encoding='UTF-8"?>
@@ -286,9 +327,18 @@ mvn tomcat7:deploy
     </servers>
 </settings>
 ```
-- Finally, let's clean, rebuild and deploy to nexus ```mvn clean deploy```
-![pushsuccess pic](pic link)
-![pushsuccess2 pic](pic link)
-![pushsuccess3 pic](pic link)
-- The artefact is also present on the server in the directory "sonatype-work/nexus3/blobs/maven-repo/content"
-![pushsuccess4 pic](pic link)
+5. Finally, let's clean, rebuild and deploy to nexus
+   
+```
+mvn clean deploy
+```
+
+![pushsuccess pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/pushsuccess.png)
+
+![pushsuccess2 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/pushsuccess2.png)
+
+![pushsuccess3 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/pushsuccess3.png)
+
+6. The artefact is also present on the server in the directory "sonatype-work/nexus3/blobs/maven-repo/content"
+   
+![pushsuccess4 pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/pushsuccess4.png)
