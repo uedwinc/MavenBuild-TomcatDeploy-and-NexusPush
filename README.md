@@ -9,22 +9,35 @@ Deploying a simple web application on tomcat using apache maven, and pushing the
 
 ### Maven Server Setup and Configuration
 
-- Launch an Amazon Linux EC2 instance server on AWS
-![amazonlinux pic or ec2 maven pic](pic link)
-- Install Java JDK 17 ```yum install java-17 -y```
+1. Launch an Amazon Linux EC2 instance server on AWS
+![amazonlinux pic or ec2 maven pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/amazonlinux.png)
+2. Install Java JDK 17
+```yum install java-17 -y```
 ```java -version``` to confirm installation
-- After installation, we need to add the java path to the bash profile ```vi ~/.bash_profile```
-- Use ```find /usr/lib/jvm/java-17* | head -n3``` to find the path.
-![jdk17 to path pic](pic link)
+3. After installation, we need to add the java path to the bash profile
+```vi ~/.bash_profile```
+4. Use ```find /usr/lib/jvm/java-17* | head -n3``` to find the path.
+![jdk17 to path pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/jdk17%20to%20path.png)
+
 - To activate: ```source ~/.bash_profile```
+
 ```echo $PATH``` to confirm.
-- Next, we download maven into the /opt/ directory (the directory is just a choice)
+
+5. Next, we download maven into the /opt/ directory (the directory is just a choice)
+
 - Download maven packages from https://maven.apache.org/download.cgi
-```wget https://dlcdn.apache.org/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.tar.gz```
-- Extract ```tar -xvzf apache-maven-3.9.4-bin.tar.gz```
-- cd into the folder and use pwd to get the working directory which we will add to the bash_profile
-![path pic](pic link)
-- Now maven is successfully installed
+
+```
+wget https://dlcdn.apache.org/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.tar.gz
+```
+- Extract using ```tar -xvzf apache-maven-3.9.4-bin.tar.gz```
+
+6. cd into the folder and use pwd to get the working directory which we will add to the bash_profile
+
+![path pic](https://github.com/uedwinc/MavenBuild-TomcatDeploy-and-NexusPush/blob/main/images/path%20pic.png)
+
+7. Now maven is successfully installed
+  
 ```mvn -version``` to confirm installation.
 
 ### Obtaining the webapp for deployment
